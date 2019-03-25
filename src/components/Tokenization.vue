@@ -5,7 +5,15 @@
         <h2>List of Producers</h2>
       </div>
       <div class="producer-list box">
-        <h5>Producer 1</h5>
+        <ol>
+          <li
+            class="overflow-text"
+            v-for="(account, index) in accounts"
+            v-bind:key="index"
+            :class="{highlight:index == selected}"
+            @click="selected = index"
+          >{{account}}</li>
+        </ol>
       </div>
     </div>
     <div class="main-details">
@@ -39,11 +47,38 @@
 </template>
 
 <script>
-import {oliCoinContract} from '../assets/js/contract.js';
-import {web3} from '../assets/js/contract.js';
+import { oliCoinContract } from "../assets/js/contract.js";
+import { web3 } from "../assets/js/contract.js";
 
 export default {
-  name: "Tokenization"
+  name: "Tokenization",
+  data() {
+    return {
+      accounts: [],
+      selected: undefined
+    };
+  },
+  methods: {
+    getProducerAccountsList: function() {
+      this.accounts = [];
+      oliCoinContract.methods
+        .getProducerAccountsList()
+        .call((error, result) => {
+          if (!error) {
+            result.shift();
+            result.forEach(account => {
+              this.accounts.push(account);
+            });
+          } else {
+            console.log(error);
+          }
+        });
+    }
+  },
+  // set default function on page load
+  created: function() {
+    this.getProducerAccountsList();
+  }
 };
 </script>
 
@@ -93,5 +128,28 @@ h4 {
   width: 49%;
   display: flex;
   flex-direction: column;
+}
+
+ol > li {
+  list-style-position: inside;
+  padding: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-left: -25px;
+  transition: font-size 0.3s ease, background-color 0.3s ease;
+}
+
+ol > li:hover {
+  background: #cccccc;
+}
+
+li.highlight {
+  background-color: #8cd98c;
+}
+
+.overflow-text {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 </style>

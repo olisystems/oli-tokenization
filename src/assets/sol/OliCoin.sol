@@ -116,7 +116,7 @@ constructor() public{
 
   // check producer registration
   function checkProducerRegistration(address _producerAddress) public constant returns (bool) {
-    if(_producerAddress != 0x0 && accountIndexArray[_producerAddress] > 0){
+    if(_producerAddress != 0x00000 && accountIndexArray[_producerAddress] > 0){
       return true;
     }
     return false;
@@ -180,7 +180,7 @@ constructor() public{
     balances[msg.sender] = balances[msg.sender].add(_energyValue);
     totalTokenSupply = totalTokenSupply.sub(_energyValue);
 
-    emit TotalTokenSupplyEvent(_energyValue);
+    emit TotalTokenSupplyEvent(totalTokenSupply);
   }
 
   function getTotalTokenSupply() public view returns (uint256) {
