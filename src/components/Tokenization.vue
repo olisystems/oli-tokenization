@@ -39,6 +39,9 @@
 </template>
 
 <script>
+import {oliCoinContract} from '../assets/js/contract.js';
+import {web3} from '../assets/js/contract.js';
+
 export default {
   name: "Tokenization"
 };
