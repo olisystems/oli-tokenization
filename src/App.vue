@@ -27,6 +27,6 @@ body {
 body {
   font-family: "Open Sans", sans-serif;
   background-color: #f3f3f3;
-  color: #333;
+  color: #333333;
 }
 </style>
