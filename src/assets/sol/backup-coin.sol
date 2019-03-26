@@ -50,14 +50,12 @@ mapping (address => uint) producerEnergyBalance;
 mapping (address => ProducerTransaction) transactions;
  
 address[] public producerAccountsList;
-uint256 public totalEnergyProduced;
-uint256 public totalMintedCoins;
+uint256 totalEnergyProduced = 0;
+uint256 totalMintedCoins = 0;
  
 constructor() public{
   producerAccountsList.push(0x0);
   totalTokenSupply = 1000000000;
-  totalMintedCoins = 1;
-  totalEnergyProduced = 1;
 }
 /* transfer tokens function  */
   function transfer(address _to, uint256 _tokens) public returns (bool success) {
@@ -181,15 +179,12 @@ constructor() public{
   /* minting new coins */
   function mintToken(uint32 _energyValue) public {
     balances[msg.sender] = balances[msg.sender].add(_energyValue);
-    totalMintedCoins = totalMintedCoins.add(_energyValue);
+    totalTokenSupply = totalTokenSupply.sub(_energyValue);
+ 
+    emit TotalTokenSupplyEvent(_energyValue);
   }
  
-  function getTotalMintedCoins() public view returns (uint256) {
-        return totalMintedCoins - 1;
+  function getTotalTokenSupply() public view returns (uint256) {
+        return totalTokenSupply;
     }
-    
-    function getTotalEnergyProduced() public view returns (uint256) {
-        return totalEnergyProduced - 1;
-    }
-    
 }
