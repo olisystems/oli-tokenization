@@ -40,7 +40,7 @@ struct ProducerTransaction {
 event ProducerRegistrationEvent (address pvAddr, string owner, string deviceType, uint32 peakPowerPos, uint32 peakPowerNeg, uint32 latitude, uint32 longitude, uint32 voltageLevel, string location, string installDate);
 event EnergyProductionEvent (address oliAddr, uint256 eTime, uint32 enerAmount);
 event ProducerTransactionEvent (address oliAddr, uint256 eTime, uint32 enerAmount, uint blockNumber, bytes32 blockHash, uint txGasPrice);
-event TotalTokenSupplyEvent (uint256 totalTokens);
+event TotalMintedTokens (uint256 totalMintedTokens);
 event TotalEnergyEvent (uint256 totalEnergy);
  
 mapping (address => Producer) producers;
@@ -157,7 +157,7 @@ constructor() public{
  
       emit ProducerTransactionEvent(msg.sender, now, _energyValue, block.number, blockhash(block.number - 1), tx.gasprice);
       emit EnergyProductionEvent(msg.sender, now, _energyValue);
-      emit TotalEnergyEvent(totalEnergyProduced);
+      emit TotalEnergyEvent(totalEnergyProduced - 1);
       // minting tokens
       mintToken(_energyValue);
     }
@@ -182,6 +182,8 @@ constructor() public{
   function mintToken(uint32 _energyValue) public {
     balances[msg.sender] = balances[msg.sender].add(_energyValue);
     totalMintedCoins = totalMintedCoins.add(_energyValue);
+
+    emit TotalMintedTokens(totalMintedCoins - 1);
   }
  
   function getTotalMintedCoins() public view returns (uint256) {
