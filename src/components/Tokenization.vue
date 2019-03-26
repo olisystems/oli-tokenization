@@ -6,7 +6,7 @@
           <h4>Total Producers</h4>
         </div>
         <div class="top-bar-box">
-          <h3>9</h3>
+          <h3>{{totalProducers}}</h3>
         </div>
       </div>
 
@@ -15,7 +15,8 @@
           <h4>Total Energy Production</h4>
         </div>
         <div class="top-bar-box">
-          <h3>9</h3>
+          <h3>{{totalEnergy}}</h3>
+          <span>kWh</span>
         </div>
       </div>
 
@@ -24,7 +25,8 @@
           <h4>Total Minted Coins</h4>
         </div>
         <div class="top-bar-box">
-          <h3>9</h3>
+          <h3>{{totalMintedCoins}}</h3>
+          <span>OLC</span>
         </div>
       </div>
     </div>
@@ -86,11 +88,17 @@ export default {
   data() {
     return {
       producers: [],
+      totalProducers: "",
+      totalEnergy: "",
+      totalMintedCoins: "",
       selected: undefined
     };
   },
   methods: {
-    getProducerAccountsList: function() {
+    getProducers: function() {
+      this.totalProducers = "";
+      this.totalEnergy = "";
+      this.totalMintedCoins = "";
       this.producers = [];
       oliCoinContract.methods
         .getProducerAccountsList()
@@ -100,15 +108,27 @@ export default {
             result.forEach(producer => {
               this.producers.push(producer);
             });
+            this.totalProducers = result.length;
+            this.getTotalEnergy();
+            this.getTotalMintedCoins();
           } else {
             console.log(error);
           }
         });
     },
     getTotalEnergy: function() {
+      oliCoinContract.methods.getTotalEnergyProduced().call((error, result) => {
+        if (!error) {
+          this.totalEnergy = result;
+        } else {
+          console.log(error);
+        }
+      });
+    },
+    getTotalMintedCoins: function() {
       oliCoinContract.methods.getTotalMintedCoins().call((error, result) => {
         if (!error) {
-          console.log(result);
+          this.totalMintedCoins = result;
         } else {
           console.log(error);
         }
@@ -117,7 +137,7 @@ export default {
   },
   // set default function on page load
   created: function() {
-    this.getProducerAccountsList();
+    this.getProducers();
   }
 };
 </script>
