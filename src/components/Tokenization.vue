@@ -16,7 +16,7 @@
         </div>
         <div class="top-bar-box">
           <h3 class="stats">{{totalEnergy}}</h3>
-          <span>kWh</span>
+          <span>Wh</span>
         </div>
       </div>
 
@@ -56,7 +56,7 @@
             </div>
             <div class="production-value box">
               <h3 class="stats">{{producerEnergyBalance}}</h3>
-              <span>kWh</span>
+              <span>Wh</span>
             </div>
           </div>
 
@@ -163,7 +163,7 @@ export default {
         },
         (error, result) => {
           if (!error) {
-            this.totalMintedCoins = result.returnValues[0];
+            this.totalMintedCoins = result.returnValues[0] / 1000;
           } else {
             console.log(error);
           }
@@ -193,7 +193,7 @@ export default {
         .balanceOf(event.target.innerHTML)
         .call((error, result) => {
           if (!error) {
-            this.producerTokenBalance = result;
+            this.producerTokenBalance = result / 1000;
           } else {
             console.log(error);
           }
