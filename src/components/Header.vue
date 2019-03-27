@@ -35,7 +35,7 @@ export default {
 .circular-img {
   width: 75px;
   height: 75px;
-  border-radius: 50%;
+  border-radius: 70%;
 }
 @media (max-width: 750px) {
   .title {
