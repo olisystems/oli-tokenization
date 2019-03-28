@@ -117,7 +117,7 @@ export default {
     };
   },
   methods: {
-    getProducers: function() {
+    getProducers() {
       this.totalProducers = "";
       this.totalEnergy = "";
       this.totalMintedCoins = "";
@@ -138,7 +138,7 @@ export default {
           }
         });
     },
-    getTotalEnergy: function() {
+    getTotalEnergy() {
       oliCoinContract.events.TotalEnergyEvent(
         {
           fromBlock: "latest",
@@ -153,7 +153,7 @@ export default {
         }
       );
     },
-    getTotalMintedCoins: function() {
+    getTotalMintedCoins() {
       oliCoinContract.events.TotalMintedTokens(
         {
           fromBlock: "latest",
@@ -168,12 +168,12 @@ export default {
         }
       );
     },
-    getProducerDetails: function() {
+    getProducerDetails() {
       this.getProducerEnergyBalance();
       this.getProducerTokenBalance();
       this.getProducerInfo();
     },
-    getProducerEnergyBalance: function() {
+    getProducerEnergyBalance() {
       this.producerEnergyBalance = "";
       oliCoinContract.methods
         .getProducerEnergyBalance(event.target.innerHTML)
@@ -185,7 +185,7 @@ export default {
           }
         });
     },
-    getProducerTokenBalance: function() {
+    getProducerTokenBalance() {
       this.producerTokenBalance = "";
       oliCoinContract.methods
         .balanceOf(event.target.innerHTML)
@@ -197,7 +197,7 @@ export default {
           }
         });
     },
-    getProducerInfo: function() {
+    getProducerInfo() {
       this.producer = [];
       oliCoinContract.methods
         .getProducerAccountDetails(event.target.innerHTML)
@@ -211,7 +211,7 @@ export default {
     }
   },
   // set default function on page load
-  created: function() {
+  created() {
     this.getProducers();
   }
 };
