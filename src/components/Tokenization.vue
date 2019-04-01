@@ -30,6 +30,7 @@
         </div>
       </div>
     </div>
+
     <div class="container">
       <div class="producers">
         <div class="producer-list-heading box heading">
@@ -97,11 +98,38 @@
         </div>
       </div>
     </div>
+
+    <div class="send-tokens">
+      <div class="transfer">
+        <div class="transfer-head box">
+          <div class="transfer-title">
+            <h4>Transfer Tokens</h4>
+          </div>
+        </div>
+        <div class="transfer-body box">
+          <div class="form">
+            <form @submit.prevent>
+              <p>To:</p>
+              <input type="text" placeholder="0x0" required v-model="toAddress">
+              <p>From:</p>
+              <input type="text" placeholder="0x0" required v-model="fromAddress">
+              <p>Amount:</p>
+              <input type="text" placeholder="0.00" required v-model="amount">
+              <div>
+                <button @click="sendToken" class="btn">Send</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="transactions box">TO:</div>
+    </div>
   </div>
 </template>
 
 <script>
 import { oliCoinContract, web3 } from "../assets/js/contract.js";
+import _ from "lodash";
 export default {
   name: "Tokenization",
   data() {
@@ -113,7 +141,10 @@ export default {
       producerEnergyBalance: "",
       producerTokenBalance: "",
       producer: [],
-      selected: undefined
+      selected: undefined,
+      toAddress: null,
+      fromAddress: null,
+      amount: null
     };
   },
   methods: {
@@ -208,6 +239,36 @@ export default {
             console.log(error);
           }
         });
+    },
+    sendToken() {
+      if (!web3.utils.isAddress(this.toAddress)) {
+        alert("Invalid address!");
+        this.toAddress = null;
+        return;
+      }
+
+      if (!web3.utils.isAddress(this.fromAddress)) {
+        alert("Invalid address!");
+        this.fromAddress = null;
+        return;
+      }
+
+      if (isNaN(this.amount) || this.amount <= 0) {
+        alert("Invalid amount!");
+        this.amount = null;
+        return;
+      }
+
+      oliCoinContract.methods
+        .transferFrom(this.toAddress, this.fromAddress, this.amount)
+        .call({ gasPrice: "4712388" }, (error, data) => {
+          if (!error) {
+            console.log(this.data);
+            this.fromAddress = this.toAddress = this.amount = null;
+          } else {
+            console.log(error);
+          }
+        });
     }
   },
   // set default function on page load
@@ -266,10 +327,10 @@ div.top-bar-box.head-col3 {
 .container {
   display: flex;
   width: 90%;
-  justify-content: space-between;
+  padding: 20px;
   margin: auto;
   align-items: flex-start;
-  padding: 20px;
+  justify-content: space-between;
 }
 
 .producers,
@@ -355,5 +416,67 @@ div.details-values > h5 {
 }
 span {
   font-weight: bold;
+}
+.send-tokens {
+  display: flex;
+  width: 90%;
+  margin: auto;
+  justify-content: space-between;
+  padding: 20px;
+}
+.transfer,
+.transactions {
+  display: flex;
+  flex-direction: column;
+  width: 45%;
+}
+
+.transfer-head {
+  background-color: #c0dbe2;
+  margin-bottom: 0;
+}
+
+.transfer-body {
+  padding: 20px;
+  /* background-color: #ccb9da;
+  margin-bottom: 0; */
+  align-items: center;
+}
+form {
+  padding: 20px;
+}
+form > p {
+  padding-bottom: 10px;
+  font-weight: bold;
+}
+input {
+  width: 90%;
+  border-radius: 2px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  padding: 0.75rem;
+  font-size: 1rem;
+  border: 1px solid #cccccc;
+}
+.btn {
+  padding: 10px;
+  float: right;
+  margin-top: 2rem;
+  margin-right: 1.5rem;
+  border: 1px solid #c0dbe2;
+  border-radius: 4px;
+  background-color: #c0dbe2;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  opacity: 1;
+}
+
+.btn:hover {
+  background-color: #88daee;
+}
+
+.btn:active {
+  opacity: 0.8;
 }
 </style>
