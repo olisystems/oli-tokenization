@@ -42,7 +42,6 @@
               class="overflow-text"
               v-for="(producer, index) in producers"
               v-bind:key="index"
-              :class="{highlight:index == selected}"
               @click="getProducerDetails"
             >{{producer}}</li>
           </ol>
@@ -106,13 +105,24 @@
             <h4>Transfer Tokens</h4>
           </div>
         </div>
+
         <div class="transfer-body box">
           <div class="form">
             <form @submit.prevent>
-              <p>To:</p>
-              <input type="text" placeholder="0x0" required v-model="toAddress">
-              <p>Amount:</p>
-              <input type="text" placeholder="0.00" required v-model="amount">
+              <select v-model="selected" required>
+                <option class="dropdown" value disabled>Please Select a Sender</option>
+                <option
+                  class="dropdown"
+                  v-for="(producer, index) in producers"
+                  v-bind:key="index"
+                >{{producer}}</option>
+              </select>
+
+              <select v-model="toAddress" required>
+                <option value disabled>Please Select a Receiver</option>
+                <option v-for="(producer, index) in producers" v-bind:key="index">{{producer}}</option>
+              </select>
+              <input type="number" min="1" placeholder="Amount" required v-model="amount">
               <div>
                 <button @click="sendToken" class="btn">Send</button>
               </div>
@@ -120,14 +130,15 @@
           </div>
         </div>
       </div>
-      <div class="transactions box">TO:</div>
+      <div class="transactions">
+        <div class="box">to</div>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import { oliCoinContract, web3 } from "../assets/js/contract.js";
-import _ from "lodash";
 export default {
   name: "Tokenization",
   data() {
@@ -139,8 +150,8 @@ export default {
       producerEnergyBalance: "",
       producerTokenBalance: "",
       producer: [],
-      selected: undefined,
-      toAddress: null,
+      selected: "",
+      toAddress: "",
       amount: null
     };
   },
@@ -238,26 +249,29 @@ export default {
         });
     },
     sendToken() {
-      if (!web3.utils.isAddress(this.toAddress)) {
-        alert("Invalid address!");
-        this.toAddress = null;
-        return;
-      }
-
-      if (isNaN(this.amount) || this.amount <= 0) {
-        alert("Invalid amount!");
-        this.amount = null;
-        return;
-      }
       oliCoinContract.methods
         .transfer(this.toAddress, this.amount)
         .send({
-          from: "0xc70DEBf7935E792036df77a4Af95b8381102e25B"
+          from: this.selected
         })
         .then(receipt => {
           console.log(receipt);
-          this.toAddress = this.amount = null;
+          this.toAddress = this.amount = this.selected = "";
+          this.trackToken();
         });
+    },
+    trackToken() {
+      oliCoinContract.getPastEvents(
+        "Transfer",
+        { fromBlock: "latest", toBlock: "latest" },
+        (error, result) => {
+          if (!error) {
+            console.log(result);
+          } else {
+            console.log(error);
+          }
+        }
+      );
     }
   },
 
@@ -430,24 +444,31 @@ span {
   padding: 20px;
   /* background-color: #ccb9da;
   margin-bottom: 0; */
-  align-items: center;
+  text-align: center;
 }
 form {
   padding: 20px;
+  text-align: center;
 }
-form > p {
-  padding-bottom: 10px;
-  font-weight: bold;
+input,
+select {
+  max-width: 100%;
+  border-bottom-color: #666769;
+  border-radius: 2px;
+  padding: 1.5rem;
+  font-size: 1rem;
+  /* border: 1px solid #cccccc; */
+  border: none;
+  border-bottom: 1px solid #cccccc;
+  outline: none;
 }
 input {
-  width: 90%;
-  border-radius: 2px;
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
-  padding: 0.75rem;
-  font-size: 1rem;
-  border: 1px solid #cccccc;
+  width: 50%;
 }
+select:hover {
+  background-color: #dddddd;
+}
+
 .btn {
   padding: 10px;
   float: right;
