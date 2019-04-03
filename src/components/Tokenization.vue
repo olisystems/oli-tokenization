@@ -111,8 +111,6 @@
             <form @submit.prevent>
               <p>To:</p>
               <input type="text" placeholder="0x0" required v-model="toAddress">
-              <p>From:</p>
-              <input type="text" placeholder="0x0" required v-model="fromAddress">
               <p>Amount:</p>
               <input type="text" placeholder="0.00" required v-model="amount">
               <div>
@@ -143,7 +141,6 @@ export default {
       producer: [],
       selected: undefined,
       toAddress: null,
-      fromAddress: null,
       amount: null
     };
   },
@@ -247,30 +244,23 @@ export default {
         return;
       }
 
-      if (!web3.utils.isAddress(this.fromAddress)) {
-        alert("Invalid address!");
-        this.fromAddress = null;
-        return;
-      }
-
       if (isNaN(this.amount) || this.amount <= 0) {
         alert("Invalid amount!");
         this.amount = null;
         return;
       }
-
       oliCoinContract.methods
-        .transferFrom(this.toAddress, this.fromAddress, this.amount)
-        .call({ gasPrice: "4712388" }, (error, data) => {
-          if (!error) {
-            console.log(this.data);
-            this.fromAddress = this.toAddress = this.amount = null;
-          } else {
-            console.log(error);
-          }
+        .transfer(this.toAddress, this.amount)
+        .send({
+          from: "0xc70DEBf7935E792036df77a4Af95b8381102e25B"
+        })
+        .then(receipt => {
+          console.log(receipt);
+          this.toAddress = this.amount = null;
         });
     }
   },
+
   // set default function on page load
   created() {
     this.getProducers();
