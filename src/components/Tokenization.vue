@@ -5,7 +5,7 @@
         <div class="top-bar-box head-col1">
           <h4>Total Producers</h4>
         </div>
-        <div class="top-bar-box">
+        <div class="top-bar-box stats-box">
           <h3 class="stats">{{totalProducers}}</h3>
         </div>
       </div>
@@ -14,7 +14,7 @@
         <div class="top-bar-box head-col2">
           <h4>Total Energy Production</h4>
         </div>
-        <div class="top-bar-box">
+        <div class="top-bar-box stats-box">
           <h3 class="stats">{{totalEnergy}}</h3>
           <span>Wh</span>
         </div>
@@ -24,7 +24,7 @@
         <div class="top-bar-box head-col3">
           <h4>Total Minted Coins</h4>
         </div>
-        <div class="top-bar-box">
+        <div class="top-bar-box stats-box">
           <h3 class="stats">{{totalMintedCoins}}</h3>
           <span>OLC</span>
         </div>
@@ -123,6 +123,7 @@
                 <option v-for="(producer, index) in producers" v-bind:key="index">{{producer}}</option>
               </select>
               <input type="number" min="1" placeholder="Amount" required v-model="amount">
+
               <div>
                 <button @click="sendToken" class="btn">Send</button>
               </div>
@@ -295,17 +296,18 @@ export default {
 }
 
 .top-bar {
-  padding: 20px;
   display: flex;
   text-align: center;
+  justify-content: space-between;
+  width: 90%;
+  padding: 20px;
+  margin: auto;
 }
 
 .top-bar-col {
   display: flex;
   flex-direction: column;
-  width: 25%;
-  margin: auto;
-  justify-content: space-between;
+  width: 28%;
 }
 
 .top-bar-box {
@@ -326,6 +328,10 @@ div.top-bar-box.head-col2 {
 div.top-bar-box.head-col3 {
   background-color: #ccb9da;
   margin-bottom: 0;
+}
+
+.stats-box {
+  flex: auto;
 }
 
 .container {
