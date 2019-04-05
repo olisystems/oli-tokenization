@@ -110,12 +110,8 @@
           <div class="form">
             <form @submit.prevent>
               <select v-model="selected" required>
-                <option class="dropdown" value disabled>Please Select a Sender</option>
-                <option
-                  class="dropdown"
-                  v-for="(producer, index) in producers"
-                  v-bind:key="index"
-                >{{producer}}</option>
+                <option value disabled>Please Select a Sender</option>
+                <option v-for="(producer, index) in producers" v-bind:key="index">{{producer}}</option>
               </select>
 
               <select v-model="toAddress" required>
@@ -123,7 +119,6 @@
                 <option v-for="(producer, index) in producers" v-bind:key="index">{{producer}}</option>
               </select>
               <input type="number" min="1" placeholder="Amount" required v-model="amount">
-
               <div>
                 <button @click="sendToken" class="btn">Send</button>
               </div>
@@ -131,8 +126,34 @@
           </div>
         </div>
       </div>
-      <div class="transactions">
-        <div class="box">to</div>
+      <div class="track-tokens">
+        <div class="transactions">
+          <div class="box track-head">
+            <div class="transfer-title">
+              <h4>Track Tokens</h4>
+            </div>
+          </div>
+
+          <div class="transaction-table box">
+            <input class="filter-input" v-model="filters.name.value" placeholder="Filter by Sender">
+            <div class="table">
+              <v-table :data="tokenTransferTx" :filters="filters" :currentPage.sync="currentPage">
+                <thead slot="head">
+                  <v-th sortKey="_from">From</v-th>
+                  <v-th sortKey="_to">To</v-th>
+                  <v-th sortKey="_tokens">Amount</v-th>
+                </thead>
+                <tbody slot="body" slot-scope="{displayData}">
+                  <tr v-for="(row, index) in displayData" :key="index">
+                    <td>{{ row._from }}</td>
+                    <td>{{ row._to }}</td>
+                    <td>{{ row._tokens }}</td>
+                  </tr>
+                </tbody>
+              </v-table>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -153,7 +174,11 @@ export default {
       producer: [],
       selected: "",
       toAddress: "",
-      amount: null
+      amount: null,
+      tokenTransferTx: [],
+      filters: {
+        name: { value: "", keys: ["_from"] }
+      }
     };
   },
   methods: {
@@ -173,6 +198,8 @@ export default {
             this.totalProducers = result.length;
             this.getTotalEnergy();
             this.getTotalMintedCoins();
+            this.trackTokens();
+            this.tokenTransferEvent();
           } else {
             console.log(error);
           }
@@ -256,18 +283,33 @@ export default {
           from: this.selected
         })
         .then(receipt => {
-          console.log(receipt);
+          //console.log(receipt);
           this.toAddress = this.amount = this.selected = "";
-          this.trackToken();
         });
     },
-    trackToken() {
-      oliCoinContract.getPastEvents(
-        "Transfer",
-        { fromBlock: "latest", toBlock: "latest" },
+    tokenTransferEvent() {
+      oliCoinContract.events.Transfer(
+        { fromBlock: "latest" },
         (error, result) => {
           if (!error) {
-            console.log(result);
+            this.tokenTransferTx.push(result.returnValues);
+          } else {
+            console.log(error);
+          }
+        }
+      );
+    },
+    trackTokens() {
+      oliCoinContract.getPastEvents(
+        "Transfer",
+        { fromBlock: 0, toBlock: "latest" },
+        (error, events) => {
+          if (!error) {
+            this.testArray = [];
+            events.forEach(event => {
+              this.tokenTransferTx.push(event.returnValues);
+            });
+            //console.log(this.tokenTransferTx);
           } else {
             console.log(error);
           }
@@ -310,6 +352,27 @@ export default {
   width: 28%;
 }
 
+.top-bar-box.head-col1 {
+  background-color: #c0dbe2;
+  margin-bottom: 0;
+}
+.top-bar-box.head-col2 {
+  background-color: #cdf1c3;
+  margin-bottom: 0;
+}
+.top-bar-box.head-col3 {
+  background-color: #ccb9da;
+  margin-bottom: 0;
+}
+
+.head-col1,
+.head-col2,
+.head-col3 {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
 .top-bar-box {
   background: white;
   padding: 10px;
@@ -317,21 +380,11 @@ export default {
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.08);
 }
 
-div.top-bar-box.head-col1 {
-  background-color: #c0dbe2;
-  margin-bottom: 0;
-}
-div.top-bar-box.head-col2 {
-  background-color: #cdf1c3;
-  margin-bottom: 0;
-}
-div.top-bar-box.head-col3 {
-  background-color: #ccb9da;
-  margin-bottom: 0;
-}
-
 .stats-box {
   flex: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .container {
@@ -435,7 +488,7 @@ span {
   padding: 20px;
 }
 .transfer,
-.transactions {
+.track-tokens {
   display: flex;
   flex-direction: column;
   width: 45%;
@@ -461,7 +514,7 @@ select {
   max-width: 100%;
   border-bottom-color: #666769;
   border-radius: 2px;
-  padding: 1.5rem;
+  padding: 1rem;
   font-size: 1rem;
   /* border: 1px solid #cccccc; */
   border: none;
@@ -472,7 +525,7 @@ input {
   width: 50%;
 }
 select:hover {
-  background-color: #dddddd;
+  background-color: rgba(147, 128, 108, 0.1);
 }
 
 .btn {
@@ -495,5 +548,101 @@ select:hover {
 
 .btn:active {
   opacity: 0.8;
+}
+
+.track-head {
+  background-color: #c0dbe2;
+  margin-bottom: 0;
+}
+
+.transaction-table {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.filter-input {
+  margin: 10px;
+  align-items: center;
+  /* background-color: rgba(147, 128, 108, 0.1); */
+  width: 90%;
+  border-radius: 4px;
+  padding: 1rem;
+  font-size: 1rem;
+  border: 1px solid #cccccc;
+  border-bottom: 1px solid #cccccc;
+  outline: none;
+}
+tbody {
+  text-align: center;
+}
+.table {
+  table-layout: auto;
+}
+th {
+  background-color: #ccb9da;
+  padding: 10px;
+}
+td {
+  max-width: 190px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 10px;
+}
+
+th,
+td {
+  border-bottom: 1px solid #cccccc;
+}
+
+.vt-sort:before {
+  font-family: FontAwesome;
+  padding-right: 0.5em;
+  width: 1.28571429em;
+  display: inline-block;
+  text-align: center;
+}
+
+.vt-sortable:before {
+  content: "\f0dc";
+}
+
+.vt-asc:before {
+  content: "\f160";
+}
+
+.vt-desc:before {
+  content: "\f161";
+}
+
+.smart-pagination {
+  list-style-type: none;
+}
+
+#app
+  > div.app
+  > div.send-tokens
+  > div.track-tokens
+  > div
+  > div.transaction-table.box
+  > div
+  > nav
+  > ul {
+  background-color: #666769;
+}
+
+#app
+  > div.app
+  > div.send-tokens
+  > div.track-tokens
+  > div
+  > div.transaction-table.box
+  > div
+  > nav
+  > ul
+  > li {
+  background-color: #666769;
+  list-style-type: none;
 }
 </style>
