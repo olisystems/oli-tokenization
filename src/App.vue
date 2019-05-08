@@ -2,18 +2,21 @@
   <div id="app">
     <Header/>
     <Tokenization/>
+    <Footer/>
   </div>
 </template>
 
 <script>
 import Header from "./components/Header.vue";
 import Tokenization from "./components/Tokenization.vue";
+import Footer from "./components/Footer.vue";
 
 export default {
   name: "app",
   components: {
     Header,
-    Tokenization
+    Tokenization,
+    Footer
   }
 };
 </script>

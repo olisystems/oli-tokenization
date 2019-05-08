@@ -11,23 +11,24 @@
     "vue": "^2.6.6"
   },
   "devDependencies": {
+    "@fortawesome/fontawesome-free": "^5.8.1",
     "@fortawesome/fontawesome-svg-core": "^1.2.17",
+    "@fortawesome/free-brands-svg-icons": "^5.8.1",
     "@fortawesome/free-solid-svg-icons": "^5.8.1",
     "@fortawesome/vue-fontawesome": "^0.1.6",
     "@vue/cli-plugin-babel": "^3.5.0",
     "@vue/cli-plugin-eslint": "^3.5.0",
-    "@vue/cli-service": "^3.5.0",
+    "@vue/cli-service": "^3.7.0",
     "babel-eslint": "^10.0.1",
     "eslint": "^5.8.0",
     "eslint-plugin-vue": "^5.0.0",
-    "i": "^0.3.6",
     "install": "^0.12.2",
-    "jquery": "^3.3.1",
+    "jquery": "^3.4.1",
     "lodash": "^4.17.11",
     "npm": "^6.9.0",
     "vue-template-compiler": "^2.5.21",
     "vuejs-smart-table": "0.0.5",
-    "web3": "^1.0.0-beta.37"
+    "web3": "^1.0.0-beta.54"
   },
   "eslintConfig": {
     "root": true,

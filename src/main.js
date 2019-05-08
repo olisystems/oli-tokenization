@@ -6,10 +6,11 @@ Vue.use(SmartTable)
 
 import './assets/css/main.css'
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faCoffee } from '@fortawesome/free-solid-svg-icons'
+import { faFacebook, faTwitter, faGithub } from '@fortawesome/free-brands-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-library.add(faCoffee)
-Vue.component('font-awesome-icon', FontAwesomeIcon)
+
+library.add(faFacebook, faTwitter, faGithub)
+Vue.component('font-awesome-icon', FontAwesomeIcon);
 
 Vue.config.productionTip = false
 
