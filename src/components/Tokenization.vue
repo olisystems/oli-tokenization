@@ -135,9 +135,22 @@
           </div>
 
           <div class="transaction-table box">
-            <input class="filter-input" v-model="filters.name.value" placeholder="Filter by Sender">
+            <div class="filter">
+              <input
+                class="filter-input"
+                v-model="filters.name.value"
+                placeholder="Filter by Sender"
+              >
+            </div>
+
             <div class="table">
-              <v-table :data="tokenTransferTx" :filters="filters" :currentPage.sync="currentPage">
+              <v-table
+                :data="tokenTransferTx"
+                :filters="filters"
+                :currentPage.sync="currentPage"
+                :pageSize="4"
+                @totalPagesChanged="totalPages = $event"
+              >
                 <thead slot="head">
                   <v-th sortKey="_from">From</v-th>
                   <v-th sortKey="_to">To</v-th>
@@ -151,6 +164,7 @@
                   </tr>
                 </tbody>
               </v-table>
+              <smart-pagination :currentPage.sync="currentPage" :totalPages="totalPages"/>
             </div>
           </div>
         </div>
@@ -178,7 +192,9 @@ export default {
       tokenTransferTx: [],
       filters: {
         name: { value: "", keys: ["_from"] }
-      }
+      },
+      currentPage: 1,
+      totalPages: 0
     };
   },
   methods: {
@@ -487,10 +503,12 @@ span {
   justify-content: space-between;
   padding: 20px;
 }
-.transfer,
-.track-tokens {
+.transfer {
   display: flex;
   flex-direction: column;
+  width: 45%;
+}
+.track-tokens {
   width: 45%;
 }
 
@@ -549,6 +567,10 @@ select:hover {
 .btn:active {
   opacity: 0.8;
 }
+.transactions {
+  display: flex;
+  flex-direction: column;
+}
 
 .track-head {
   background-color: #c0dbe2;
@@ -558,33 +580,39 @@ select:hover {
 .transaction-table {
   display: flex;
   flex-direction: column;
+}
+
+.filter,
+.table {
+  display: flex;
+  flex-direction: column;
   align-items: center;
 }
 
 .filter-input {
   margin: 10px;
-  align-items: center;
   /* background-color: rgba(147, 128, 108, 0.1); */
   width: 90%;
   border-radius: 4px;
-  padding: 1rem;
+  padding: 0.5rem;
   font-size: 1rem;
   border: 1px solid #cccccc;
   border-bottom: 1px solid #cccccc;
   outline: none;
 }
+
+.table table {
+  table-layout: fixed;
+  width: 100%;
+}
 tbody {
   text-align: center;
 }
-.table {
-  table-layout: auto;
-}
 th {
   background-color: #ccb9da;
-  padding: 10px;
+  padding: 5px;
 }
 td {
-  max-width: 190px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -595,54 +623,8 @@ th,
 td {
   border-bottom: 1px solid #cccccc;
 }
-
-.vt-sort:before {
-  font-family: FontAwesome;
-  padding-right: 0.5em;
-  width: 1.28571429em;
-  display: inline-block;
-  text-align: center;
-}
-
-.vt-sortable:before {
-  content: "\f0dc";
-}
-
-.vt-asc:before {
-  content: "\f160";
-}
-
-.vt-desc:before {
-  content: "\f161";
-}
-
-.smart-pagination {
-  list-style-type: none;
-}
-
-#app
-  > div.app
-  > div.send-tokens
-  > div.track-tokens
-  > div
-  > div.transaction-table.box
-  > div
-  > nav
-  > ul {
-  background-color: #666769;
-}
-
-#app
-  > div.app
-  > div.send-tokens
-  > div.track-tokens
-  > div
-  > div.transaction-table.box
-  > div
-  > nav
-  > ul
-  > li {
-  background-color: #666769;
-  list-style-type: none;
+th:last-child,
+td:last-child {
+  width: 80px;
 }
 </style>
