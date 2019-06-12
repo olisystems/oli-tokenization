@@ -75,24 +75,37 @@
             <h3>Producer Details</h3>
           </div>
           <div class="details box">
-            <div class="details-headings">
-              <h5>Name:</h5>
-              <h5>Device Type:</h5>
-              <h5>Peak Power Positive:</h5>
-              <h5>Location:</h5>
-              <h5>Latitude:</h5>
-              <h5>Longitude:</h5>
-              <h5>Installation Date:</h5>
+            <div class="placeholder">
+              <h5>select an account to see the details</h5>
             </div>
-            <div class="details-values">
-              <h5>{{producer[0]}}</h5>
-              <h5>{{producer[1]}}</h5>
-              <h5>{{producer[2]}}</h5>
-              <h5>{{producer[3]}}</h5>
-              <h5>{{producer[4]}}</h5>
-              <h5>{{producer[5]}}</h5>
-              <h5>{{producer[6]}}</h5>
-            </div>
+            <table class="details-table">
+              <tbody>
+                <tr>
+                  <th class="property-name">Name:</th>
+                  <td class="property-value">{{producer[0]}}</td>
+                </tr>
+                <tr>
+                  <th class="property-name">Device Type:</th>
+                  <td class="property-value">{{producer[1]}}</td>
+                </tr>
+                <tr>
+                  <th class="property-name">Peak Power (+) [W]:</th>
+                  <td class="property-value">{{producer[2]}}</td>
+                </tr>
+                <tr>
+                  <th class="property-name">Latitude:</th>
+                  <td class="property-value">{{producer[3]}}</td>
+                </tr>
+                <tr>
+                  <th class="property-name">Longitude:</th>
+                  <td class="property-value">{{producer[4]}}</td>
+                </tr>
+                <tr>
+                  <th class="property-name">Install Date:</th>
+                  <td class="property-value">{{producer[5]}}</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
@@ -175,6 +188,8 @@
 
 <script>
 import { oliCoinContract, web3 } from "../assets/js/contract.js";
+const $ = require("jquery");
+import { log } from "util";
 export default {
   name: "Tokenization",
   data() {
@@ -255,6 +270,8 @@ export default {
       this.getProducerEnergyBalance();
       this.getProducerTokenBalance();
       this.getProducerInfo();
+      $(".placeholder").hide();
+      $(".details-table").show();
     },
     getProducerEnergyBalance() {
       this.producerEnergyBalance = "";
@@ -291,6 +308,13 @@ export default {
             console.log(error);
           }
         });
+
+      // removing the background color for ul-selected items
+      document.querySelectorAll(".producer-list > ol>li").forEach(list => {
+        list.classList.remove("active");
+      });
+      // add background to selected account
+      event.target.classList.add("active");
     },
     sendToken() {
       oliCoinContract.methods
@@ -430,6 +454,10 @@ h2,
 h3,
 h4 {
   text-transform: uppercase;
+}
+
+h5 {
+  color: #bbbbbb;
 }
 
 .inforgraphics {
@@ -626,5 +654,52 @@ td {
 th:last-child,
 td:last-child {
   width: 80px;
+}
+
+.active {
+  background-color: #9be99b;
+}
+
+.details {
+  height: 280px;
+}
+
+.placeholder {
+  margin-top: 6rem;
+  text-align: center;
+}
+
+h5 {
+  text-align: center;
+}
+
+.details-table {
+  padding: 1rem;
+  margin-top: 1rem;
+  width: 100%;
+  padding: 0.5rem;
+  display: none;
+}
+
+.details-table {
+  border: #d8d3d3 1px solid;
+  border-radius: 2px;
+}
+
+.property-name {
+  background: #f2f0f3;
+  font-size: 0.8rem;
+  text-align: left;
+  width: 40%;
+  position: relative;
+  border: #d8d3d3 1px solid;
+  border-radius: 2px;
+}
+
+.property-value {
+  color: #394f7c;
+  font-size: 1rem;
+  font-weight: bold;
+  width: 40%;
 }
 </style>
