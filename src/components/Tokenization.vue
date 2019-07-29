@@ -131,7 +131,7 @@
                 <option value disabled>Please Select a Receiver</option>
                 <option v-for="(producer, index) in producers" v-bind:key="index">{{producer}}</option>
               </select>
-              <input type="number" min="1" placeholder="Amount" required v-model="amount">
+              <input type="number" min="1" placeholder="Amount" required v-model="amount" />
               <div>
                 <button @click="sendToken" class="btn">Send</button>
               </div>
@@ -153,7 +153,7 @@
                 class="filter-input"
                 v-model="filters.name.value"
                 placeholder="Filter by Sender"
-              >
+              />
             </div>
 
             <div class="table">
@@ -177,7 +177,7 @@
                   </tr>
                 </tbody>
               </v-table>
-              <smart-pagination :currentPage.sync="currentPage" :totalPages="totalPages"/>
+              <smart-pagination :currentPage.sync="currentPage" :totalPages="totalPages" />
             </div>
           </div>
         </div>
